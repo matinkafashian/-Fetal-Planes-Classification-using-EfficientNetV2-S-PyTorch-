@@ -1,47 +1,25 @@
-Fetal Planes Classification (EfficientNetV2-S | PyTorch)
+# Fetal ultrasound image classification
 
-This project classifies fetal ultrasound images into 6 anatomical planes using EfficientNetV2-S with transfer learning in PyTorch.
-The model is trained on the Fetal Planes DB dataset and achieves 90%+ accuracy on validation and test sets.
+Notebook project using an ImageNet-pretrained EfficientNetV2-S model and PyTorch to classify six categories in the supplied Fetal Planes DB dataset. This is a dataset experiment, not a clinically validated diagnostic system.
 
-🚀 Features
+## Repository contents
 
-EfficientNetV2-S (pretrained on ImageNet)
+- `Fetal_Planes_DB.ipynb`: data inspection, training, validation and test evaluation.
+- `LICENSE`: repository license.
 
-Custom classifier for 6 classes
+There are no standalone `train.py` or `test.py` scripts. Run the notebook itself.
 
-Medical-specific data augmentations
+## Run the notebook
 
-Automatic best-model saving
+1. Import `Fetal_Planes_DB.ipynb` into a Kaggle notebook. A GPU is recommended; the code falls back to CPU.
+2. Attach the Kaggle dataset `minhnhtl05/fetal-planes-db-dataset` and enable internet access for pretrained weights if they are not cached.
+3. Verify the dataset is available at `/kaggle/input/fetal-planes-db-dataset/Fetal_Planes_DB`, with `train/`, `val/` and `test/` class folders. The notebook also contains a `kagglehub.dataset_download` cell, but subsequent cells use the explicit Kaggle path rather than the returned download path.
+4. Outside Kaggle, update `dataset_path`, `base_path` and `base_dir` to your actual dataset location.
+5. Run the cells in order. Dependencies used are Python, torch, torchvision, pandas, scikit-learn, matplotlib, Pillow and kagglehub. Exact versions from the original run were not recorded; matching them reproducibly remains future work.
+6. The training cell runs 15 epochs with batch size 32, AdamW (learning rate 1e-4, weight decay 1e-2), and CrossEntropyLoss. It saves the best validation checkpoint as `best_efficientnet_v2_s_fetal_planes.pth`, reloads it and evaluates the supplied test split.
 
-Clean training & evaluation pipeline
+## Interpreting results
 
-📂 Dataset
+Results in the notebook are saved historical outputs, not a new reproduction of training. The resume reports 94.68% test accuracy on the supplied 3,725-image test split, with 7,437 training images. Inspect the notebook outputs alongside that claim.
 
-Kaggle: Fetal Planes DB
-Structure:
-
-train/
-val/
-test/
-
-🧠 Training Pipeline
-
-ImageFolder + transforms
-
-EfficientNetV2-S with replaced final layer
-
-Loss: CrossEntropy
-
-Optimizer: AdamW
-
-Saves the best model as: best_efficientnet_v2_s_fetal_planes.pth
-
-📊 Results
-
-Validation Accuracy: 90%+
-
-Test Accuracy: 90%+
-
-▶️ Run
-python train.py
-python test.py
+The code uses grayscale-to-RGB conversion, image augmentation for training, and deterministic resize/center-crop transforms for validation and test. It does not establish patient independence across the supplied splits or clinical generalization. A fixed training seed, dependency lockfile, per-class metrics and patient-level split audit would improve reproducibility. No performance guarantee is made for new datasets.
